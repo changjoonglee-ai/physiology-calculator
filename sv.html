@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>심박출량(Cardiac Output) 계산기</title>
+
+<style>
+
+body{
+    font-family: Arial;
+    background:#eef4fa;
+    margin:40px;
+}
+
+.container{
+    width:700px;
+    margin:auto;
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0px 0px 15px gray;
+}
+
+h1{
+    text-align:center;
+    color:#1d4e89;
+}
+
+.slider{
+    width:100%;
+}
+
+.output{
+    font-size:28px;
+    color:#d62828;
+    font-weight:bold;
+    text-align:center;
+    margin-top:20px;
+}
+
+.barbox{
+    width:100%;
+    height:35px;
+    background:#dddddd;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.bar{
+    height:35px;
+    width:0%;
+    background:#3b82f6;
+    transition:0.4s;
+}
+
+table{
+    width:100%;
+    margin-top:20px;
+    border-collapse:collapse;
+}
+
+td{
+    padding:8px;
+    border-bottom:1px solid #ccc;
+}
+
+.note{
+    margin-top:20px;
+    background:#f4f7ff;
+    padding:15px;
+    border-radius:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>심박출량(Cardiac Output) 계산기</h1>
+
+<p><b>심박수 (HR)</b></p>
+
+<input type="range"
+min="30"
+max="220"
+value="70"
+id="hr"
+class="slider"
+oninput="calculate()">
+
+<p id="hrValue">70 bpm</p>
+
+<hr>
+
+<p><b>1회 박출량 (SV)</b></p>
+
+<input type="range"
+min="30"
+max="200"
+value="70"
+id="sv"
+class="slider"
+oninput="calculate()">
+
+<p id="svValue">70 mL</p>
+
+<hr>
+
+<div class="output" id="co">
+5.0 L/min
+</div>
+
+<br>
+
+<div class="barbox">
+
+<div class="bar" id="bar"></div>
+
+</div>
+
+<table>
+
+<tr>
+
+<td>일반 성인</td>
+
+<td>약 4~6 L/min</td>
+
+</tr>
+
+<tr>
+
+<td>가벼운 운동</td>
+
+<td>8~12 L/min</td>
+
+</tr>
+
+<tr>
+
+<td>격렬한 운동</td>
+
+<td>20~35 L/min</td>
+
+</tr>
+
+<tr>
+
+<td>엘리트 운동선수</td>
+
+<td>35~40 L/min 이상</td>
+
+</tr>
+
+</table>
+
+<div class="note">
+
+<b>공식</b><br><br>
+
+CO = HR × SV ÷ 1000
+
+</div>
+
+</div>
+
+<script>
+
+function calculate(){
+
+let hr=document.getElementById("hr").value;
+
+let sv=document.getElementById("sv").value;
+
+document.getElementById("hrValue").innerHTML=
+hr+" bpm";
+
+document.getElementById("svValue").innerHTML=
+sv+" mL";
+
+let co=(hr*sv)/1000;
+
+document.getElementById("co").innerHTML=
+co.toFixed(2)+" L/min";
+
+let percent=co/40*100;
+
+if(percent>100)
+percent=100;
+
+document.getElementById("bar").style.width=
+percent+"%";
+
+}
+
+calculate();
+
+</script>
+
+</body>
+</html>
