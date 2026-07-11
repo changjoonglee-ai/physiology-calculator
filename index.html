@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1회박출량 계산기</title>
+
+<style>
+
+body{
+    font-family: "Malgun Gothic", Arial, sans-serif;
+    background:#f2f5f8;
+    margin:0;
+    padding:30px;
+}
+
+.container{
+    max-width:650px;
+    margin:auto;
+    background:white;
+    padding:30px;
+    border-radius:12px;
+    box-shadow:0 0 15px rgba(0,0,0,.15);
+}
+
+h1{
+    text-align:center;
+    color:#1e5aa8;
+}
+
+h2{
+    color:#444;
+}
+
+label{
+    display:block;
+    margin-top:18px;
+    font-weight:bold;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    font-size:18px;
+    margin-top:5px;
+}
+
+button{
+
+    width:100%;
+    margin-top:25px;
+    padding:14px;
+    font-size:20px;
+    background:#1e88e5;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+
+}
+
+button:hover{
+    background:#1565c0;
+}
+
+.result{
+
+    margin-top:30px;
+    background:#eef7ff;
+    padding:20px;
+    border-radius:10px;
+
+}
+
+.big{
+
+    font-size:32px;
+    color:#c62828;
+    font-weight:bold;
+
+}
+
+.note{
+
+    margin-top:15px;
+    font-size:17px;
+
+}
+
+.footer{
+
+    margin-top:30px;
+    text-align:center;
+    color:gray;
+    font-size:14px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🫀 1회박출량 계산기</h1>
+
+<p>
+확장기말 용적(EDV)과 수축기말 용적(ESV)을 입력하면
+1회박출량(SV)과 박출률(EF)을 계산합니다.
+</p>
+
+<label>확장기말 용적 (EDV, mL)</label>
+
+<input id="edv" type="number" placeholder="예: 120">
+
+<label>수축기말 용적 (ESV, mL)</label>
+
+<input id="esv" type="number" placeholder="예: 50">
+
+<button onclick="calculate()">
+계산하기
+</button>
+
+<div class="result">
+
+<h2>계산 결과</h2>
+
+<p>1회박출량(SV)</p>
+
+<div class="big" id="sv">-</div>
+
+<p>박출률(EF)</p>
+
+<div class="big" id="ef">-</div>
+
+<div class="note" id="comment"></div>
+
+</div>
+
+<div class="footer">
+
+Stroke Volume = EDV − ESV<br>
+Ejection Fraction = (SV / EDV) × 100
+
+</div>
+
+</div>
+
+<script>
+
+function calculate(){
+
+let edv=parseFloat(document.getElementById("edv").value);
+
+let esv=parseFloat(document.getElementById("esv").value);
+
+if(isNaN(edv)||isNaN(esv)){
+
+alert("EDV와 ESV를 모두 입력하세요.");
+
+return;
+
+}
+
+if(edv<=0||esv<0){
+
+alert("올바른 값을 입력하세요.");
+
+return;
+
+}
+
+if(esv>edv){
+
+alert("ESV는 EDV보다 클 수 없습니다.");
+
+return;
+
+}
+
+let sv=edv-esv;
+
+let ef=sv/edv*100;
+
+document.getElementById("sv").innerHTML=
+sv.toFixed(1)+" mL";
+
+document.getElementById("ef").innerHTML=
+ef.toFixed(1)+" %";
+
+let txt="";
+
+if(sv>=60 && sv<=100){
+
+txt+="✅ 1회박출량은 정상 범위(약 60~100 mL)입니다.<br>";
+
+}else{
+
+txt+="⚠️ 1회박출량이 일반적인 정상 범위를 벗어났습니다.<br>";
+
+}
+
+if(ef>=55 && ef<=70){
+
+txt+="✅ 박출률은 정상 범위(55~70%)입니다.";
+
+}else if(ef<55){
+
+txt+="⚠️ 박출률이 낮습니다.";
+
+}else{
+
+txt+="⚠️ 박출률이 높은 편입니다.";
+
+}
+
+document.getElementById("comment").innerHTML=txt;
+
+}
+
+</script>
+
+</body>
+
+</html>
