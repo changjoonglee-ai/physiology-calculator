@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>심박출량 계산기</title>
+</head>
+
+<body>
+
+<h1>심박출량 계산기</h1>
+
+<p>심박수(HR)</p>
+
+<input id="hr">
+
+<p>1회박출량(SV)</p>
+
+<input id="sv">
+
+<button onclick="calc()">계산</button>
+
+<h2 id="result"></h2>
+
+<script>
+
+function calc(){
+
+let hr=parseFloat(document.getElementById("hr").value);
+
+let sv=parseFloat(document.getElementById("sv").value);
+
+let co=hr*sv/1000;
+
+document.getElementById("result").innerHTML=
+
+"심박출량 = "+co.toFixed(2)+" L/min";
+
+}
+
+</script>
+
+</body>
+
+</html>
