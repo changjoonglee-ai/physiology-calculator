@@ -2,45 +2,52 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Poiseuille's Law 혈류량 계산기</title>
 
 <style>
 body{
-    font-family:Arial;
-    background:#f4f8fb;
-    margin:40px;
+    font-family: Arial, Helvetica, sans-serif;
+    background:#f2f7fb;
+    margin:0;
+    padding:30px;
 }
 
 .container{
-    max-width:650px;
+    max-width:700px;
     margin:auto;
     background:white;
     padding:30px;
-    border-radius:12px;
+    border-radius:15px;
     box-shadow:0 0 15px rgba(0,0,0,0.15);
 }
 
-h2{
+h1{
     text-align:center;
     color:#005792;
 }
 
+.form-group{
+    margin-top:18px;
+}
+
 label{
     display:block;
-    margin-top:15px;
+    margin-bottom:6px;
     font-weight:bold;
 }
 
-input{
+input, select{
     width:100%;
     padding:10px;
     font-size:16px;
+    box-sizing:border-box;
 }
 
 button{
-    margin-top:20px;
     width:100%;
-    padding:12px;
+    margin-top:25px;
+    padding:14px;
     font-size:18px;
     background:#0078D7;
     color:white;
@@ -54,57 +61,124 @@ button:hover{
 }
 
 .result{
-    margin-top:25px;
+    margin-top:30px;
     padding:20px;
     background:#eef7ff;
     border-radius:10px;
     font-size:18px;
+    line-height:1.8;
 }
 
 .note{
-    margin-top:20px;
-    font-size:14px;
-    color:#555;
+    margin-top:30px;
+    background:#fafafa;
+    border-left:5px solid #0078D7;
+    padding:15px;
+    font-size:15px;
+    line-height:1.6;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px;
+}
+
+th,td{
+    border:1px solid #ccc;
+    padding:8px;
+    text-align:center;
+}
+
+th{
+    background:#e8f2ff;
 }
 </style>
-
 </head>
+
 <body>
 
 <div class="container">
 
-<h2>Poiseuille's Law 혈류량 계산기</h2>
+<h1>Poiseuille's Law 혈류량 계산기</h1>
 
-<label>혈압차 ΔP (Pa)</label>
-<input type="number" id="pressure" value="1333">
+<p style="text-align:center;">
+혈류량(Q)을 자동 계산합니다.
+</p>
 
+<div class="form-group">
+<label>압력차 ΔP</label>
+<input type="number" id="pressure" value="10">
+<select id="pressureUnit">
+    <option value="mmHg">mmHg</option>
+    <option value="Pa">Pa</option>
+    <option value="kPa">kPa</option>
+</select>
+</div>
+
+<div class="form-group">
 <label>혈관 반지름 r (mm)</label>
 <input type="number" id="radius" value="2">
+</div>
 
+<div class="form-group">
 <label>혈관 길이 L (cm)</label>
 <input type="number" id="length" value="10">
+</div>
 
+<div class="form-group">
 <label>혈액 점도 η (Pa·s)</label>
-<input type="number" step="0.001" id="viscosity" value="0.0035">
+<input type="number" step="0.0001" id="viscosity" value="0.0035">
+</div>
 
-<button onclick="calculate()">계산하기</button>
+<button onclick="calculate()">
+혈류량 계산
+</button>
 
 <div class="result" id="result">
-
-혈류량이 표시됩니다.
-
+결과가 여기에 표시됩니다.
 </div>
 
 <div class="note">
 
-<b>사용 단위</b><br><br>
+<b>사용 공식</b>
 
-ΔP : Pa<br>
-r : mm<br>
-L : cm<br>
-η : Pa·s<br><br>
+<br><br>
 
-결과는 m³/s 와 mL/min으로 표시됩니다.
+Q = (π × ΔP × r⁴) / (8 × η × L)
+
+<table>
+<tr>
+<th>기호</th>
+<th>의미</th>
+<th>입력단위</th>
+</tr>
+
+<tr>
+<td>ΔP</td>
+<td>압력차</td>
+<td>mmHg / Pa / kPa</td>
+</tr>
+
+<tr>
+<td>r</td>
+<td>혈관 반지름</td>
+<td>mm</td>
+</tr>
+
+<tr>
+<td>L</td>
+<td>혈관 길이</td>
+<td>cm</td>
+</tr>
+
+<tr>
+<td>η</td>
+<td>혈액 점도</td>
+<td>Pa·s</td>
+</tr>
+
+</table>
 
 </div>
 
@@ -112,26 +186,72 @@ L : cm<br>
 
 <script>
 
-function calculate(){
+function pressureToPa(value,unit){
 
-let dp=parseFloat(document.getElementById("pressure").value);
+    switch(unit){
 
-let r=parseFloat(document.getElementById("radius").value)/1000;
+        case "mmHg":
+            return value*133.322;
 
-let L=parseFloat(document.getElementById("length").value)/100;
+        case "kPa":
+            return value*1000;
 
-let eta=parseFloat(document.getElementById("viscosity").value);
+        default:
+            return value;
 
-let Q=(Math.PI*dp*Math.pow(r,4))/(8*eta*L);
-
-let mlmin=Q*1000000*60;
-
-document.getElementById("result").innerHTML=
-"<b>혈류량(Q)</b><br><br>"+
-Q.toExponential(5)+" m³/s<br><br>"+
-mlmin.toFixed(2)+" mL/min";
+    }
 
 }
+
+function calculate(){
+
+    let pressure=parseFloat(document.getElementById("pressure").value);
+
+    let unit=document.getElementById("pressureUnit").value;
+
+    let dp=pressureToPa(pressure,unit);
+
+    let radius_mm=parseFloat(document.getElementById("radius").value);
+
+    let length_cm=parseFloat(document.getElementById("length").value);
+
+    let eta=parseFloat(document.getElementById("viscosity").value);
+
+    let r=radius_mm/1000;
+
+    let L=length_cm/100;
+
+    let Q=(Math.PI*dp*Math.pow(r,4))/(8*eta*L);
+
+    let mlmin=Q*1000000*60;
+
+    document.getElementById("result").innerHTML=
+
+    "<h2>계산 결과</h2>"+
+
+    "<b>입력 압력</b><br>"+
+
+    pressure+" "+unit+
+
+    "<br><br>"+
+
+    "<b>환산 압력</b><br>"+
+
+    dp.toFixed(2)+" Pa"+
+
+    "<br><br>"+
+
+    "<b>혈류량</b><br>"+
+
+    Q.toExponential(5)+" m³/s"+
+
+    "<br><br>"+
+
+    mlmin.toFixed(2)+" mL/min";
+
+}
+
+calculate();
 
 </script>
 
