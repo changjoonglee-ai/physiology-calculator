@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Action Potential Viewer</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f4f4f4;text-align:center}
+svg{background:#fff;border:1px solid #000}
+#info{font-size:22px;font-weight:bold;margin-top:12px}
+.axis{stroke:#000;stroke-width:2}
+.tick{stroke:#000}
+.label{font-size:14px}
+.point{fill:#000}
+#curve{fill:none;stroke:#1565c0;stroke-width:3}
+#crossV,#crossH{stroke:#999;stroke-dasharray:4 4;visibility:hidden}
+#cursor{fill:red;stroke:#000;visibility:hidden}
+</style>
+</head>
+<body>
+<h2>신경세포 활동전위</h2>
+<svg id="svg" width="1000" height="500" viewBox="0 0 1000 500">
+<g id="axis"></g>
+<path id="curve"></path>
+<g id="pts"></g>
+<line id="crossV"></line>
+<line id="crossH"></line>
+<circle id="cursor" r="6"></circle>
+</svg>
+<div id="info">시간: <span id="t">-</span> ms &nbsp;&nbsp; 막전위: <span id="v">-</span> mV</div>
+<script>
+const data=[
+[0.00,-70],[0.05,-70],[0.10,-70],[0.15,-70],[0.20,-70],[0.25,-70],[0.30,-70],[0.35,-70],[0.40,-70],[0.45,-70],[0.50,-70],[0.55,-69.8],[0.60,-69.5],[0.65,-69.0],[0.70,-68.5],[0.75,-67.8],[0.80,-67.0],[0.85,-66.0],[0.90,-64.5],[0.95,-62.5],[1.00,-60],[1.05,-56],[1.10,-51],[1.15,-45],[1.20,-38],[1.25,-28],[1.30,-16],[1.35,-2],[1.40,10],[1.45,18],[1.50,24],[1.55,28],[1.60,30],[1.65,29],[1.70,27],[1.75,24],[1.80,20],[1.85,14],[1.90,7],[1.95,-4],[2.00,-18],[2.05,-30],[2.10,-40],[2.15,-48],[2.20,-55],[2.25,-61],[2.30,-66],[2.35,-70],[2.40,-73],[2.45,-75],[2.50,-77],[2.55,-78],[2.60,-79],[2.65,-79.5],[2.70,-79.8],[2.75,-80],[2.80,-80],[2.85,-79.9],[2.90,-79.7],[2.95,-79.5],[3.00,-79],[3.05,-78.8],[3.10,-78.5],[3.15,-78],[3.20,-77.3],[3.25,-76.5],[3.30,-75.8],[3.35,-75],[3.40,-74],[3.45,-73.3],[3.50,-72.5],[3.55,-71.8],[3.60,-71.2],[3.65,-70.8],[3.70,-70.5],[3.75,-70.2],[3.80,-70],[3.85,-70],[3.90,-70],[3.95,-70],[4.00,-70]
+];
+const svg=document.getElementById("svg"),NS="http://www.w3.org/2000/svg";
+const W=1000,H=500,L=80,R=40,T=40,B=60,GW=W-L-R,GH=H-T-B;
+const X=t=>L+t/4*GW,Y=v=>H-B-(v+80)/110*GH;
+function add(n,a,p){let e=document.createElementNS(NS,n);for(let k in a)e.setAttribute(k,a[k]);(p||axis).appendChild(e);return e;}
+const axis=document.getElementById("axis"),pts=document.getElementById("pts");
+add("line",{x1:L,y1:H-B,x2:W-R,y2:H-B,class:"axis"});
+add("line",{x1:L,y1:T,x2:L,y2:H-B,class:"axis"});
+[-80,-70,30].forEach(v=>{let y=Y(v);add("line",{x1:L-5,y1:y,x2:L,y2:y,class:"tick"});let tx=add("text",{x:8,y:y+5,class:"label"});tx.textContent=v;});
+[0,1,2,3,4].forEach(t=>{let x=X(t);add("line",{x1:x,y1:H-B,x2:x,y2:H-B+5,class:"tick"});let tx=add("text",{x:x-3,y:H-B+20,class:"label"});tx.textContent=t;});
+let d="";
+data.forEach((p,i)=>{let x=X(p[0]),y=Y(p[1]);d+=(i?" L ":"M ")+x+" "+y;add("circle",{cx:x,cy:y,r:2.5,class:"point"},pts);});
+document.getElementById("curve").setAttribute("d",d);
+const cv=document.getElementById("crossV"),ch=document.getElementById("crossH"),cur=document.getElementById("cursor");
+svg.addEventListener("mousemove",e=>{
+ let r=svg.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;
+ let best=data[0],bd=1e99;
+ data.forEach(p=>{let dx=X(p[0])-mx,dy=Y(p[1])-my,s=dx*dx+dy*dy;if(s<bd){bd=s;best=p;}});
+ let x=X(best[0]),y=Y(best[1]);
+ cur.setAttribute("cx",x);cur.setAttribute("cy",y);cur.setAttribute("visibility","visible");
+ cv.setAttribute("x1",x);cv.setAttribute("x2",x);cv.setAttribute("y1",T);cv.setAttribute("y2",H-B);cv.setAttribute("visibility","visible");
+ ch.setAttribute("x1",L);ch.setAttribute("x2",W-R);ch.setAttribute("y1",y);ch.setAttribute("y2",y);ch.setAttribute("visibility","visible");
+ document.getElementById("t").textContent=best[0].toFixed(2);
+ document.getElementById("v").textContent=best[1].toFixed(1);
+});
+</script>
+</body></html>
